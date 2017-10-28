@@ -15,4 +15,10 @@ class TaskRepository {
         tasks += task
         return task
     }
+
+    fun findById(id: Long): Task? = tasks.find { it.id == id }
+
+    fun delete(task: Task) {
+        tasks.removeIf { (id) -> id == task.id }
+    }
 }
