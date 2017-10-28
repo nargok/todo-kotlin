@@ -18,6 +18,10 @@ class TaskController(private val objectMapper: ObjectMapper,
         taskRepository.findAll()
     }
 
+    fun show(): Route = Route { req, res ->
+        req.task ?: throw halt(404)
+    }
+
     fun create(): Route = Route { req, res ->
         val request: TaskCreateRequest =
                 objectMapper.readValue(req.bodyAsBytes()) ?: throw halt(400) // 型：TaskCreateRequestを推論する
@@ -26,8 +30,20 @@ class TaskController(private val objectMapper: ObjectMapper,
         task
     }
 
-    fun show(): Route = Route { req, res ->
-        req.task ?: throw halt(404)
+    fun update(): Route = Route { req, res ->
+        val request: TaskUpdateRequest =
+                objectMapper.readValue(req.bodyAsBytes()) ?: throw halt(400)
+        val task = req.task ?: throw halt(404)
+//        val newTask = task.run {
+//            copy(content = request.content ?: content,
+//                    done = request.done ?: done)
+//        }
+        val newTask = task.copy(
+                content = request.content ?: task.content,
+                done = request.done ?: task.done
+        )
+        taskRepository.update(newTask)
+        res.status(204)
     }
 
     fun destroy(): Route = Route { req, res ->
@@ -35,7 +51,6 @@ class TaskController(private val objectMapper: ObjectMapper,
         taskRepository.delete(task)
         res.status(204)
     }
-
 }
 
 

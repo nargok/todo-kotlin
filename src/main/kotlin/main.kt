@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import spark.Spark.delete
 import spark.Spark.get
+import spark.Spark.patch
 import spark.Spark.path
 import spark.Spark.post
+
 
 fun main(args: Array<String>) {
     val objectMapper = ObjectMapper().registerKotlinModule()
@@ -17,6 +19,7 @@ fun main(args: Array<String>) {
         get("", taskController.index(), jsonTransformer)
         post("", taskController.create(), jsonTransformer)
         get("/:id", taskController.show(), jsonTransformer)
+        patch("/:id", taskController.update(), jsonTransformer)
         delete("/:id", taskController.destroy(), jsonTransformer)
     }
 }
